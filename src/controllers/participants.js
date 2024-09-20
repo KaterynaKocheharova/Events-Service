@@ -1,28 +1,19 @@
-// export const getContactsController = async (req, res) => {
-//   const userId = req.user._id;
-//   const users = await getUsers();
-
-//   res.status(200).json({
-//     status: 200,
-//     message: 'Successfully found events',
-//     data: users,
-//   });
-// };
+import { registerParticipant } from '../services/participants.js';
 
 
-// export const createUserController = async (req, res) => {
-//   const { name, email, password } = req.body;
-//   const userData = {
-//     name,
-//     email,
-//     password,
-//   };
+export const registerParticipantController = async (req, res) => {
+  const { eventId } = req.params;
+  const userData = {
+    fullName: req.body.fullName,
+    email: req.body.email,
+    birthDate: req.body.birthDate,
+    heardFrom: req.body.heardFrom,
+  };
 
-//   const createdUser = await createUser(userData);
+  await registerParticipant(userData, eventId);
 
-//   res.status(201).json({
-//     status: 201,
-//     message: 'Successfully registered user!',
-//     data: createdUser,
-//   });
-// };
+  res.status(201).json({
+    status: 201,
+    message: 'Successfully registered participant!',
+  });
+};

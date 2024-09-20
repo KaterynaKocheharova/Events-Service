@@ -19,6 +19,17 @@ export const getEvents = async ({ page, perPage }) => {
   };
 };
 
+export const getEventById = (id) => EventsCollection.findById(id);
+
+export const updateEventParticipants = (participantId, eventId) =>
+  EventsCollection.findByIdAndUpdate(
+    eventId,
+    {
+      $addToSet: { registeredUsers: participantId },
+    },
+    { new: true },
+  );
+
 // !!! pagination
 // export const getEvents = async ({
 //   page,

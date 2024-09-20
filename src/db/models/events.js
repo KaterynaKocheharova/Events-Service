@@ -11,7 +11,7 @@ const eventsSchema = new Schema(
       required: true,
     },
     eventDate: {
-      type: String,
+      type: Date,
       required: true,
     },
     organize: {
@@ -20,7 +20,7 @@ const eventsSchema = new Schema(
     },
     registeredUsers: [
       {
-        type: Types.ObjectId,
+        type: String,
         ref: 'participants',
         required: true,
       },

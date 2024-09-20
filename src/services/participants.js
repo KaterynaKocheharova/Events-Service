@@ -1,60 +1,44 @@
-// import path from 'node:path';
-// import fs from 'node:fs/promises';
-// import { env } from '../utils/env.js';
-// import { ParticipantsCollection } from '../db/models/participants.js';
+import createHttpError from 'http-errors';
+import { ParticipantsCollection } from '../db/models/participants.js';
+import { updateEventParticipants } from './events.js';
+import { getEventById } from './events.js';
 
-// !!! get participants
+export const findParticipantByEmail = (email) =>
+  ParticipantsCollection.findOne({ email });
 
-// export const getEvents = async ({
-//   page,
-//   perPage,
-//   sortOrder,
-//   sortBy,
-//   filter,
-//   userId,
-// }) => {
-//   const limit = perPage;
-//   const skip = page > 0 ? (page - 1) * perPage : 0;
+export const createParticipant = (participantData) =>
+  ParticipantsCollection.create(participantData);
 
-//   const query = {
-//     userId: userId,
-//   };
+export const registerParticipant = async (participantData, eventId) => {
+  let participantId;
+  // CHECK IF THE PARTICIPANT ALREADY EXISTS IN THE DB
+  const participant = await findParticipantByEmail(participantData.email);
+  if (participant) {
+    participantId = participant.id;
+  } else {
+    const newParticipant = await createParticipant(participantData);
+    participantId = newParticipant.id;
+  }
 
-//   const contactsQuery = ParticipantsCollection.find(query);
+  // CHECK IF THE EVENT EXISTS
 
-//   if (filter.isFavourite) {
-//     contactsQuery.where('isFavourite').equals(Boolean(filter.isFavorite));
-//   }
+  const event = await getEventById(eventId);
 
-//   if (filter.contactType) {
-//     contactsQuery.where('contactType').equals(filter.contactType);
-//   }
+  if (!event) {
+    throw createHttpError(404, 'Event not found');
+  }
+  // CHECK IF EVENT ALREADY HAS THE PARTICIPANT
 
-//   const [contactsCount, contacts] = await Promise.all([
-//     ParticipantsCollection.countDocuments(query),
-//     contactsQuery
-//       .skip(skip)
-//       .limit(limit)
-//       .sort({ [sortBy]: sortOrder })
-//       .exec(),
-//   ]);
+  const alreadyExistingParticipant = event.registeredUsers.includes(participantId);
 
-//   const paginationData = calculatePaginationData(contactsCount, page, perPage);
+  console.log(participantId, event.registeredUsers);
+  if (alreadyExistingParticipant) {
+    throw createHttpError(400, 'Already registered for this event!');
+  }
 
-//   return {
-//     data: contacts,
-//     ...paginationData,
-//   };
-// };
+  // ADD A PARTICIPANT
 
+  await updateEventParticipants(participantId, eventId);
 
-// !!! get a participant
-
-// export const registerParticipant = async (userData) => {
-//   const alreadyExistingUser = await User.findOne({ email: userData.email });
-//   if (alreadyExistingUser !== null) {
-//     throw createHttpError(409, 'Email in use');
-//   }
-//   const encryptedPassword = await bcrypt.hash(userData.password, 10);
-//   return User.create({ ...userData, password: encryptedPassword });
-// };
+  return;
+};

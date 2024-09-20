@@ -1,4 +1,4 @@
-import { Schema, model, Types } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 const participantsSchema = new Schema(
   {
@@ -12,7 +12,7 @@ const participantsSchema = new Schema(
       unique: true,
     },
     birthDate: {
-      type: Date,
+      type: String,
       required: true,
     },
     heardFrom: {
@@ -20,13 +20,6 @@ const participantsSchema = new Schema(
       enum: ['social media', 'friends', 'found myself'],
       required: true,
     },
-    registeredForEvents: [
-      {
-        type: Types.ObjectId,
-        ref: 'users',
-        required: true,
-      },
-    ],
   },
   { timestamps: true, versionKey: false },
 );
