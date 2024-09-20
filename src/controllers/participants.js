@@ -1,6 +1,5 @@
 import { registerParticipant } from '../services/participants.js';
 
-
 export const registerParticipantController = async (req, res) => {
   const { eventId } = req.params;
   const userData = {
@@ -10,10 +9,9 @@ export const registerParticipantController = async (req, res) => {
     heardFrom: req.body.heardFrom,
   };
 
-  await registerParticipant(userData, eventId);
+  const participant = await registerParticipant(userData, eventId);
 
   res.status(201).json({
-    status: 201,
-    message: 'Successfully registered participant!',
+    participant,
   });
 };

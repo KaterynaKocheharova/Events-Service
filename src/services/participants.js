@@ -11,13 +11,14 @@ export const createParticipant = (participantData) =>
 
 export const registerParticipant = async (participantData, eventId) => {
   let participantId;
+  let participant;
   // CHECK IF THE PARTICIPANT ALREADY EXISTS IN THE DB
-  const participant = await findParticipantByEmail(participantData.email);
+  participant = await findParticipantByEmail(participantData.email);
   if (participant) {
     participantId = participant.id;
   } else {
-    const newParticipant = await createParticipant(participantData);
-    participantId = newParticipant.id;
+    participant = await createParticipant(participantData);
+    participantId = participant.id;
   }
 
   // CHECK IF THE EVENT EXISTS
@@ -29,7 +30,8 @@ export const registerParticipant = async (participantData, eventId) => {
   }
   // CHECK IF EVENT ALREADY HAS THE PARTICIPANT
 
-  const alreadyExistingParticipant = event.registeredUsers.includes(participantId);
+  const alreadyExistingParticipant =
+    event.registeredUsers.includes(participantId);
 
   console.log(participantId, event.registeredUsers);
   if (alreadyExistingParticipant) {
@@ -39,6 +41,5 @@ export const registerParticipant = async (participantData, eventId) => {
   // ADD A PARTICIPANT
 
   await updateEventParticipants(participantId, eventId);
-
-  return;
+  return participant;
 };
