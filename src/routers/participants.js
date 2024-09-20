@@ -6,7 +6,7 @@ const router = express.Router();
 const jsonParser = express.json();
 
 router.get(
-  '/participants',
+  '/',
   jsonParser,
   ctrlWrapper(),
 );

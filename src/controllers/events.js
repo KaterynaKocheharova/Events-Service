@@ -1,11 +1,16 @@
-// import { getEvents } from '../services/events.js';
-// import createHttpError from 'http-errors';
+import { getEvents } from '../services/events.js';
 // import parsePaginationParams from '../utils/parsePaginationParams.js';
 // import parseSortParams from '../utils/parseSortParams.js';
 // import parseFilterParams from '../utils/parseFilterParams.js';
 
-// export const getContactsController = async (req, res) => {
-//   const userId = req.user._id;
+export const getEventsController = async (req, res) => {
+  const events = await getEvents();
+  res.status(200).json({
+    events,
+  });
+};
+
+// !!! pagination and filtration
 //   const { page, perPage } = parsePaginationParams(req.query);
 //   const { sortOrder, sortBy } = parseSortParams(req.query);
 //   const filter = parseFilterParams(req.query);
@@ -17,24 +22,3 @@
 //     filter,
 //     userId,
 //   });
-
-//   res.status(200).json({
-//     status: 200,
-//     message: 'Successfully found events',
-//     data: contacts,
-//   });
-// };
-
-// export const getContactByIdController = async (req, res) => {
-//   const userId = req.user._id;
-//   const { contactId } = req.params;
-//   const contact = await getContactById(contactId, userId);
-//   if (!contact) {
-//     throw createHttpError(404, 'Contact not found');
-//   }
-//   res.status(200).send({
-//     status: 200,
-//     message: `Successfully found contact with id ${contactId}`,
-//     data: contact,
-//   });
-// };

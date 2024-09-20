@@ -1,47 +1,49 @@
-import { ParticipantsCollection } from '../db/models/participants.js';
-import { calculatePaginationData } from '../utils/calculatePaginationData.js';
+import { EventsCollection } from "../db/models/events.js";
 
-export const getEvents = async ({
-  page,
-  perPage,
-  sortOrder,
-  sortBy,
-  filter,
-  userId,
-}) => {
-  const limit = perPage;
-  const skip = page > 0 ? (page - 1) * perPage : 0;
+export const getEvents = () => EventsCollection.find();
 
-  const query = {
-    userId: userId,
-  };
+// !!! pagination
+// export const getEvents = async ({
+//   page,
+//   perPage,
+//   sortOrder,
+//   sortBy,
+//   filter,
+//   userId,
+// }) => {
+//   const limit = perPage;
+//   const skip = page > 0 ? (page - 1) * perPage : 0;
 
-  const contactsQuery = ParticipantsCollection.find(query);
+//   const query = {
+//     userId: userId,
+//   };
 
-  if (filter.isFavourite) {
-    contactsQuery.where('isFavourite').equals(Boolean(filter.isFavorite));
-  }
+//   const contactsQuery = ParticipantsCollection.find(query);
 
-  if (filter.contactType) {
-    contactsQuery.where('contactType').equals(filter.contactType);
-  }
+//   if (filter.isFavourite) {
+//     contactsQuery.where('isFavourite').equals(Boolean(filter.isFavorite));
+//   }
 
-  const [contactsCount, contacts] = await Promise.all([
-    ParticipantsCollection.countDocuments(query),
-    contactsQuery
-      .skip(skip)
-      .limit(limit)
-      .sort({ [sortBy]: sortOrder })
-      .exec(),
-  ]);
+//   if (filter.contactType) {
+//     contactsQuery.where('contactType').equals(filter.contactType);
+//   }
 
-  const paginationData = calculatePaginationData(contactsCount, page, perPage);
+//   const [contactsCount, contacts] = await Promise.all([
+//     ParticipantsCollection.countDocuments(query),
+//     contactsQuery
+//       .skip(skip)
+//       .limit(limit)
+//       .sort({ [sortBy]: sortOrder })
+//       .exec(),
+//   ]);
 
-  return {
-    data: contacts,
-    ...paginationData,
-  };
-};
+//   const paginationData = calculatePaginationData(contactsCount, page, perPage);
+
+//   return {
+//     data: contacts,
+//     ...paginationData,
+//   };
+// };
 
 
 // !!! get event by participants???
