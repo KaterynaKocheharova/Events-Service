@@ -1,4 +1,7 @@
-import { registerParticipant } from '../services/participants.js';
+import {
+  registerParticipant,
+  getParticipantsByEventId,
+} from '../services/participants.js';
 
 export const registerParticipantController = async (req, res) => {
   const { eventId } = req.params;
@@ -13,5 +16,14 @@ export const registerParticipantController = async (req, res) => {
 
   res.status(201).json({
     participant,
+  });
+};
+
+export const getParticipantsController = async (req, res) => {
+  const { eventId } = req.params;
+  const participants = await getParticipantsByEventId(eventId);
+
+  res.json({
+    participants,
   });
 };

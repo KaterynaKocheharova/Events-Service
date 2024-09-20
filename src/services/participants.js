@@ -6,6 +6,8 @@ import { getEventById } from './events.js';
 export const findParticipantByEmail = (email) =>
   ParticipantsCollection.findOne({ email });
 
+export const getParticipantById = (id) => ParticipantsCollection.findById(id);
+
 export const createParticipant = (participantData) =>
   ParticipantsCollection.create(participantData);
 
@@ -39,4 +41,15 @@ export const registerParticipant = async (participantData, eventId) => {
   // ADDING A PARTICIPANT ID TO EVENTS COLLECTION
   await updateEventParticipants(participantId, eventId);
   return participant;
+};
+
+export const getParticipantsByEventId = async (eventId) => {
+  const event = await getEventById(eventId);
+  const participantsIds = event.registeredUsers;
+
+  const participants = await Promise.all(
+    participantsIds.map((id) => getParticipantById(id)),
+  );
+
+  return participants;
 };

@@ -14,7 +14,7 @@ const eventsSchema = new Schema(
       type: Date,
       required: true,
     },
-    organize: {
+    organizer: {
       type: String,
       required: true,
     },
