@@ -1,6 +1,23 @@
-import { EventsCollection } from "../db/models/events.js";
+import { EventsCollection } from '../db/models/events.js';
+import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
-export const getEvents = () => EventsCollection.find();
+export const getEvents = async ({ page, perPage }) => {
+  const limit = perPage;
+  const skip = page > 0 ? (page - 1) * perPage : 0;
+
+  const eventsQuery = EventsCollection.find();
+  const [events, eventsCount] = await Promise.all([
+    eventsQuery.countDocuments,
+    eventsQuery.skip(skip).limit(limit).exec(),
+  ]);
+
+  const paginationData = calculatePaginationData(eventsCount, page, perPage);
+
+  return {
+    data: events,
+    ...paginationData,
+  };
+};
 
 // !!! pagination
 // export const getEvents = async ({
@@ -44,7 +61,6 @@ export const getEvents = () => EventsCollection.find();
 //     ...paginationData,
 //   };
 // };
-
 
 // !!! get event by participants???
 // export const getContactById = async (contactId, userId) => {
