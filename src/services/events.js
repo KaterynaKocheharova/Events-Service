@@ -5,11 +5,9 @@ export const getEvents = async ({ page, perPage }) => {
   const limit = perPage;
   const skip = page > 0 ? (page - 1) * perPage : 0;
 
-  const eventsQuery = EventsCollection.find();
-  const [eventsCount, events] = await Promise.all([
-    eventsQuery.countDocuments,
-    eventsQuery.skip(skip).limit(limit).exec(),
-  ]);
+  const eventsCountPromise = EventsCollection.countDocuments();
+  const eventsPromise = EventsCollection.find().skip(skip).limit(limit).exec();
+  const [eventsCount, events] = await Promise.all([eventsCountPromise, eventsPromise]);
 
   const paginationData = calculatePaginationData(eventsCount, page, perPage);
 
@@ -18,6 +16,7 @@ export const getEvents = async ({ page, perPage }) => {
     ...paginationData,
   };
 };
+
 
 export const getEventById = (id) => EventsCollection.findById(id);
 
