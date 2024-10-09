@@ -9,7 +9,7 @@
 
 ## KEY FEATURES ##
 
-* Storing and managing a list of available events and participants
+* Storing and managing available events and participants
 * Registering a new event participant
 * Paginating events
 
